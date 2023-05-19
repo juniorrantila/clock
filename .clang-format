@@ -1,0 +1,15 @@
+---
+Language: Cpp
+BasedOnStyle: WebKit
+AlignEscapedNewlines: Left
+AlignTrailingComments: true
+IndentPPDirectives: AfterHash
+BreakBeforeBraces: Custom
+BraceWrapping:
+    AfterFunction: true
+QualifierAlignment: Right
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: false
+ColumnLimit: 120
+AllowAllArgumentsOnNextLine: false
+SortIncludes: true
