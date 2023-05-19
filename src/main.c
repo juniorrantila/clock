@@ -27,6 +27,7 @@ static i128 clock_gettime_as_u128(clockid_t);
 static u128 timespec_to_u128(struct timespec);
 static TimeParts time_parts(u128 nanoseconds);
 static i32 time_printable(TimeParts, char* buf, u32 buf_size);
+static pid_t spawn(char* file, char** argv, char** envp);
 
 int main(int argc, char* argv[], char* envp[])
 {
@@ -38,11 +39,7 @@ int main(int argc, char* argv[], char* envp[])
     u128 real_start = (u128)MUST(clock_gettime_as_u128(CLOCK_REALTIME));
     u128 cpu_start = (u128)MUST(clock_gettime_as_u128(CLOCK_PROCESS_CPUTIME_ID));
 
-    pid_t pid = 0;
-    if (posix_spawnp(&pid, argv[1], null, null, &argv[1], envp) != 0) {
-        perror("posix_spawnp");
-        return -1;
-    }
+    pid_t pid = MUST(spawn(argv[1], &argv[1], envp));
     int result = 0;
     MUST(waitpid(pid, &result, 0));
 
@@ -64,6 +61,15 @@ int main(int argc, char* argv[], char* envp[])
     }
 
     return WEXITSTATUS(result);
+}
+
+static pid_t spawn(char* file, char** argv, char** envp)
+{
+    pid_t pid = 0;
+    errno = posix_spawnp(&pid, file, null, null, argv, envp);
+    if (errno != 0)
+        return -1;
+    return pid;
 }
 
 static i128 clock_gettime_as_u128(clockid_t id)
